@@ -2,18 +2,21 @@
 entities used by the Game. Because these classes are also regular Python
 classes they can include methods (such as 'to_form' and 'new_game')."""
 
+# TODO: understand NDB and datastore
+
 import random
 from datetime import date
 from protorpc import messages
 from google.appengine.ext import ndb
 
-
+# User class, this will not change
 class User(ndb.Model):
     """User profile"""
     name = ndb.StringProperty(required=True)
     email =ndb.StringProperty()
 
 
+# This will be optimized for connect five
 class Game(ndb.Model):
     """Game object"""
     target = ndb.IntegerProperty(required=True)
@@ -24,7 +27,7 @@ class Game(ndb.Model):
 
     @classmethod
     def new_game(cls, user, min, max, attempts):
-        """Creates and returns a new game"""
+        """Creates and returns a new connect five game"""
         if max < min:
             raise ValueError('Maximum must be greater than minimum')
         game = Game(user=user,

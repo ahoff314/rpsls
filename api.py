@@ -27,8 +27,9 @@ USER_REQUEST = endpoints.ResourceContainer(user_name=messages.StringField(1),
 
 MEMCACHE_MOVES_REMAINING = 'MOVES_REMAINING'
 
+# This probably won't change/ this creates a user
 @endpoints.api(name='connect_five', version='v1')
-class GuessANumberApi(remote.Service):
+class ConnectFiveApi(remote.Service):
     """CONNECT FIVE API"""
     @endpoints.method(request_message=USER_REQUEST,
                       response_message=StringMessage,
@@ -39,7 +40,7 @@ class GuessANumberApi(remote.Service):
         """Create a new User. Requires a unique username"""
         if User.query(User.name == request.user_name).get():
             raise endpoints.ConflictException(
-                    'A User with that name already exists!')
+                    'A user with that name already exists!!!')
         user = User(name=request.user_name, email=request.email)
         user.put()
         return StringMessage(message='User {} created!'.format(
@@ -51,11 +52,11 @@ class GuessANumberApi(remote.Service):
                       name='new_game',
                       http_method='POST')
     def new_game(self, request):
-        """Creates new game"""
+        """Creates a new Connect Five game"""
         user = User.query(User.name == request.user_name).get()
         if not user:
             raise endpoints.NotFoundException(
-                    'A User with that name does not exist!')
+                    'A user with that name does not exist!')
         try:
             game = Game.new_game(user.key, request.min,
                                  request.max, request.attempts)
@@ -75,13 +76,14 @@ class GuessANumberApi(remote.Service):
                       name='get_game',
                       http_method='GET')
     def get_game(self, request):
-        """Return the current game state."""
+        """Return the current game state"""
         game = get_by_urlsafe(request.urlsafe_game_key, Game)
         if game:
-            return game.to_form('Time to make a move!')
+            return game.to_form('Show me your moves')
         else:
             raise endpoints.NotFoundException('Game not found!')
 
+    # TODO: Implement new game logic
     @endpoints.method(request_message=MAKE_MOVE_REQUEST,
                       response_message=GameForm,
                       path='game/{urlsafe_game_key}',
@@ -91,7 +93,7 @@ class GuessANumberApi(remote.Service):
         """Makes a move. Returns a game state with message"""
         game = get_by_urlsafe(request.urlsafe_game_key, Game)
         if game.game_over:
-            return game.to_form('Game already over!')
+            return game.to_form('Game already OVER')
 
         game.attempts_remaining -= 1
         if request.guess == game.target:
@@ -115,7 +117,7 @@ class GuessANumberApi(remote.Service):
                       name='get_scores',
                       http_method='GET')
     def get_scores(self, request):
-        """Return all scores"""
+        """Return Leaderboard"""
         return ScoreForms(items=[score.to_form() for score in Score.query()])
 
     @endpoints.method(request_message=USER_REQUEST,
@@ -124,11 +126,11 @@ class GuessANumberApi(remote.Service):
                       name='get_user_scores',
                       http_method='GET')
     def get_user_scores(self, request):
-        """Returns all of an individual User's scores"""
+        """Returns all of an individual user's scores"""
         user = User.query(User.name == request.user_name).get()
         if not user:
             raise endpoints.NotFoundException(
-                    'A User with that name does not exist!')
+                    'A user with that name does not exist!')
         scores = Score.query(Score.user == user.key)
         return ScoreForms(items=[score.to_form() for score in scores])
 
@@ -153,4 +155,4 @@ class GuessANumberApi(remote.Service):
                          'The average moves remaining is {:.2f}'.format(average))
 
 
-api = endpoints.api_server([GuessANumberApi])
+api = endpoints.api_server([ConnectFiveApi])
