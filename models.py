@@ -17,7 +17,7 @@ class User(ndb.Model):
 
 
 # This will be optimized for connect five
-# repeated field
+# repeated field?= true
 class Game(ndb.Model):
     """Game object"""
     target = ndb.IntegerProperty(required=True)
@@ -60,6 +60,7 @@ class Game(ndb.Model):
         score.put()
 
 
+# change this big time, new score model based on how quick someone wins
 class Score(ndb.Model):
     """Score object"""
     user = ndb.KeyProperty(required=True, kind='User')
