@@ -30,7 +30,7 @@ MEMCACHE_MOVES_REMAINING = 'MOVES_REMAINING'
 # This probably won't change/ this creates a user
 @endpoints.api(name='connect_five', version='v1')
 class ConnectFiveApi(remote.Service):
-    """CONNECT FIVE API"""
+    """CONNECT FIVE API | ahoff314"""
     @endpoints.method(request_message=USER_REQUEST,
                       response_message=StringMessage,
                       path='user',
@@ -68,7 +68,7 @@ class ConnectFiveApi(remote.Service):
         # This operation is not needed to complete the creation of a new game
         # so it is performed out of sequence.
         taskqueue.add(url='/tasks/cache_average_attempts')
-        return game.to_form('Good luck playing Guess a Number!')
+        return game.to_form('Good luck!')
 
     @endpoints.method(request_message=GET_GAME_REQUEST,
                       response_message=GameForm,
@@ -93,7 +93,7 @@ class ConnectFiveApi(remote.Service):
         """Makes a move. Returns a game state with message"""
         game = get_by_urlsafe(request.urlsafe_game_key, Game)
         if game.game_over:
-            return game.to_form('Game already OVER')
+            return game.to_form('Game already over')
 
         game.attempts_remaining -= 1
         if request.guess == game.target:

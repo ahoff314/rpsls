@@ -17,6 +17,7 @@ class User(ndb.Model):
 
 
 # This will be optimized for connect five
+# repeated field
 class Game(ndb.Model):
     """Game object"""
     target = ndb.IntegerProperty(required=True)
