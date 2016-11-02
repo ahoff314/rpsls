@@ -27,7 +27,7 @@ USER_REQUEST = endpoints.ResourceContainer(user_name=messages.StringField(1),
 
 MEMCACHE_MOVES_REMAINING = 'MOVES_REMAINING'
 
-# This probably won't change/ this creates a user
+# TODO: API endpoints config for ConnectFiveAPI - create_user, get_game, etc etc
 @endpoints.api(name='connect_five', version='v1')
 class ConnectFiveApi(remote.Service):
     """CONNECT FIVE API | ahoff314"""
@@ -83,7 +83,7 @@ class ConnectFiveApi(remote.Service):
         else:
             raise endpoints.NotFoundException('Game not found!')
 
-    # TODO: Implement new game logic
+    # TODO: Game logic (minimal)
     @endpoints.method(request_message=MAKE_MOVE_REQUEST,
                       response_message=GameForm,
                       path='game/{urlsafe_game_key}',
@@ -142,6 +142,8 @@ class ConnectFiveApi(remote.Service):
         """Get the cached average moves remaining"""
         return StringMessage(message=memcache.get(MEMCACHE_MOVES_REMAINING) or '')
 
+
+    # TODO: Optimize cache_avg attempt with average moves remaining in main.py
     @staticmethod
     def _cache_average_attempts():
         """Populates memcache with the average moves remaining of Games"""

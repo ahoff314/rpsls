@@ -2,7 +2,7 @@
 entities used by the Game. Because these classes are also regular Python
 classes they can include methods (such as 'to_form' and 'new_game')."""
 
-# TODO: understand NDB and datastore
+
 
 import random
 from datetime import date
@@ -16,8 +16,7 @@ class User(ndb.Model):
     email =ndb.StringProperty()
 
 
-# This will be optimized for connect five
-# repeated field?= true
+# TODO: New game model
 class Game(ndb.Model):
     """Game object"""
     target = ndb.IntegerProperty(required=True)
@@ -60,7 +59,7 @@ class Game(ndb.Model):
         score.put()
 
 
-# change this big time, new score model based on how quick someone wins
+# TODO: New Score model fam
 class Score(ndb.Model):
     """Score object"""
     user = ndb.KeyProperty(required=True, kind='User')
@@ -72,7 +71,7 @@ class Score(ndb.Model):
         return ScoreForm(user_name=self.user.get().name, won=self.won,
                          date=str(self.date), guesses=self.guesses)
 
-
+# TODO: Optimize other forms (Game, new game, make move, etc etc)
 class GameForm(messages.Message):
     """GameForm for outbound game state information"""
     urlsafe_key = messages.StringField(1, required=True)
