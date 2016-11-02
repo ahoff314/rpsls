@@ -27,10 +27,10 @@ USER_REQUEST = endpoints.ResourceContainer(user_name=messages.StringField(1),
 
 MEMCACHE_MOVES_REMAINING = 'MOVES_REMAINING'
 
-# TODO: API endpoints config for ConnectFiveAPI - create_user, get_game, etc etc
-@endpoints.api(name='connect_five', version='v1')
-class ConnectFiveApi(remote.Service):
-    """CONNECT FIVE API | ahoff314 """
+# TODO: API endpoints config for RPSLS - create_user, get_game, etc etc
+@endpoints.api(name='rpsls', version='v1')
+class RpslsApi(remote.Service):
+    """ Rock Paper Scissors Lizard Spock | ahoff314 """
     @endpoints.method(request_message=USER_REQUEST,
                       response_message=StringMessage,
                       path='user',
@@ -52,7 +52,7 @@ class ConnectFiveApi(remote.Service):
                       name='new_game',
                       http_method='POST')
     def new_game(self, request):
-        """Creates a new Connect Five game"""
+        """Creates a new RPSLS game"""
         user = User.query(User.name == request.user_name).get()
         if not user:
             raise endpoints.NotFoundException(
@@ -148,6 +148,7 @@ class ConnectFiveApi(remote.Service):
     def _cache_average_attempts():
         """Populates memcache with the average moves remaining of Games"""
         games = Game.query(Game.game_over == False).fetch()
+        games = Game.query(Game.game_over == False).fetch()
         if games:
             count = len(games)
             total_attempts_remaining = sum([game.attempts_remaining
@@ -157,4 +158,4 @@ class ConnectFiveApi(remote.Service):
                          'The average moves remaining is {:.2f}'.format(average))
 
 
-api = endpoints.api_server([ConnectFiveApi])
+api = endpoints.api_server([RpslsApi])

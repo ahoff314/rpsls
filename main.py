@@ -6,7 +6,7 @@ import logging
 
 import webapp2
 from google.appengine.api import mail, app_identity
-from api import ConnectFiveApi
+from api import RpslsApi
 
 from models import User
 
@@ -31,7 +31,7 @@ class SendReminderEmail(webapp2.RequestHandler):
 class UpdateAverageMovesRemaining(webapp2.RequestHandler):
     def post(self):
         """Update game listing announcement in memcache."""
-        ConnectFiveApi._cache_average_attempts()
+        RpslsApi._cache_average_attempts()
         self.response.set_status(204)
 
 

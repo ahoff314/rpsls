@@ -2,8 +2,6 @@
 entities used by the Game. Because these classes are also regular Python
 classes they can include methods (such as 'to_form' and 'new_game')."""
 
-
-
 import random
 from datetime import date
 from protorpc import messages
@@ -13,7 +11,7 @@ from google.appengine.ext import ndb
 class User(ndb.Model):
     """User profile"""
     name = ndb.StringProperty(required=True)
-    email =ndb.StringProperty()
+    email = ndb.StringProperty()
     wins = ndb.IntegerProperty(default=0)
     total_games = ndb.IntegerProperty(default=0)
 
@@ -25,26 +23,41 @@ class User(ndb.Model):
         else:
             return 0
 
+    def to_form(self):
+        """Returns a UserForm representation of User"""
+        form = UserForm()
+        form.user_name = self.name
+        form.email = self.email
+        form.wins = self.wins
+        form.total_games = self.total_games
+        form.percentage = self.percentage
+        return form
+
+    def win(self):
+        """Adds win to User"""
+        self.wins += 1
+        self.total_games += 1
+        self.put()
+
+    def loss(self):
+        """Adds loss to User"""
+        self.total_games += 1
+        self.put()
+
 
 # TODO: New game model
 class Game(ndb.Model):
     """Game object"""
-    target = ndb.IntegerProperty(required=True)
-    attempts_allowed = ndb.IntegerProperty(required=True)
     attempts_remaining = ndb.IntegerProperty(required=True, default=5)
-    game_over = ndb.BooleanProperty(required=True, default=False)
     user = ndb.KeyProperty(required=True, kind='User')
+    record = ndb.StringProperty(repeated=True)
 
     @classmethod
-    def new_game(cls, user, min, max, attempts):
-        """Creates and returns a new connect five game"""
+    def new_game(cls, user):
+        """Creates and returns a new RPSLS game"""
         if max < min:
             raise ValueError('Maximum must be greater than minimum')
-        game = Game(user=user,
-                    target=random.choice(range(1, max + 1)),
-                    attempts_allowed=attempts,
-                    attempts_remaining=attempts,
-                    game_over=False)
+        game = Game(user=user, game_over=False, record=[])
         game.put()
         return game
 
