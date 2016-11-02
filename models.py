@@ -14,6 +14,16 @@ class User(ndb.Model):
     """User profile"""
     name = ndb.StringProperty(required=True)
     email =ndb.StringProperty()
+    wins = ndb.IntegerProperty(default=0)
+    total_games = ndb.IntegerProperty(default=0)
+
+    @property
+    def percentage(self):
+        """ Win percentage"""
+        if self.total_games > 0:
+            return float(self.wins)/float(self.total_games)
+        else:
+            return 0
 
 
 # TODO: New game model

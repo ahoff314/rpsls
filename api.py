@@ -30,7 +30,7 @@ MEMCACHE_MOVES_REMAINING = 'MOVES_REMAINING'
 # TODO: API endpoints config for ConnectFiveAPI - create_user, get_game, etc etc
 @endpoints.api(name='connect_five', version='v1')
 class ConnectFiveApi(remote.Service):
-    """CONNECT FIVE API | ahoff314"""
+    """CONNECT FIVE API | ahoff314 """
     @endpoints.method(request_message=USER_REQUEST,
                       response_message=StringMessage,
                       path='user',
@@ -59,7 +59,7 @@ class ConnectFiveApi(remote.Service):
                     'A user with that name does not exist!')
         try:
             game = Game.new_game(user.key, request.min,
-                                 request.max, request.attempts)
+                                 request.max, request.attempts) # needs to be game specific
         except ValueError:
             raise endpoints.BadRequestException('Maximum must be greater '
                                                 'than minimum!')
