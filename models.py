@@ -45,7 +45,6 @@ class User(ndb.Model):
         self.put()
 
 
-# TODO: New game model
 class Game(ndb.Model):
     """Game object"""
     attempts_remaining = ndb.IntegerProperty(required=True, default=5)
@@ -55,8 +54,6 @@ class Game(ndb.Model):
     @classmethod
     def new_game(cls, user):
         """Creates and returns a new RPSLS game"""
-        if max < min:
-            raise ValueError('Maximum must be greater than minimum')
         game = Game(user=user, game_over=False, record=[])
         game.put()
         return game
@@ -66,11 +63,11 @@ class Game(ndb.Model):
         form = GameForm()
         form.urlsafe_key = self.key.urlsafe()
         form.user_name = self.user.get().name
-        form.attempts_remaining = self.attempts_remaining
         form.game_over = self.game_over
         form.message = message
         return form
 
+    # TODO: Implement proper scoring
     def end_game(self, won=False):
         """Ends the game - if won is True, the player won. - if won is False,
         the player lost."""
@@ -82,23 +79,24 @@ class Game(ndb.Model):
         score.put()
 
 
-# TODO: New Score model fam
 class Score(ndb.Model):
     """Score object"""
     user = ndb.KeyProperty(required=True, kind='User')
+    game = ndb.StringProperty(required=true)
+    message = ndb.StringProperty(required=true)
+    user_selection = ndb.StringProperty(required=true)
+    computer_selection = ndb.StringProperty(required=true)
     date = ndb.DateProperty(required=True)
     won = ndb.BooleanProperty(required=True)
-    guesses = ndb.IntegerProperty(required=True)
 
+    # TODO: Update score form based on end game scoring
     def to_form(self):
         return ScoreForm(user_name=self.user.get().name, won=self.won,
                          date=str(self.date), guesses=self.guesses)
 
-# TODO: Optimize other forms (Game, new game, make move, etc etc)
 class GameForm(messages.Message):
     """GameForm for outbound game state information"""
     urlsafe_key = messages.StringField(1, required=True)
-    attempts_remaining = messages.IntegerField(2, required=True)
     game_over = messages.BooleanField(3, required=True)
     message = messages.StringField(4, required=True)
     user_name = messages.StringField(5, required=True)
@@ -111,10 +109,15 @@ class NewGameForm(messages.Message):
     max = messages.IntegerField(3, default=10)
     attempts = messages.IntegerField(4, default=5)
 
-
+# TODO: Update make a move form to work with game scoring
 class MakeMoveForm(messages.Message):
     """Used to make a move in an existing game"""
-    guess = messages.IntegerField(1, required=True)
+    selection = messages.StringField(1, required=True)
+
+
+class GameForms(messages.Message):
+    """Return multiple GameForms"""
+    items = messages.MessageField(GameForm, 1, repeated=True)
 
 
 class ScoreForm(messages.Message):
@@ -122,7 +125,8 @@ class ScoreForm(messages.Message):
     user_name = messages.StringField(1, required=True)
     date = messages.StringField(2, required=True)
     won = messages.BooleanField(3, required=True)
-    guesses = messages.IntegerField(4, required=True)
+    user_selection = messages.StringField(4, required=True)
+    computer_selection = messages.StringField(5, required=True)
 
 
 class ScoreForms(messages.Message):
@@ -133,3 +137,22 @@ class ScoreForms(messages.Message):
 class StringMessage(messages.Message):
     """StringMessage-- outbound (single) string message"""
     message = messages.StringField(1, required=True)
+
+
+class UserForm(messages.Message):
+    """UserForm for outbound User information"""
+    user_name = messages.StringField(1, required=True)
+    email = messages.StringField(2)
+    wins = messages.IntegerField(3, required=True)
+    total_games = messages.IntegerField(4, required=True)
+    percentage = messages.FloatField(5, required=True)
+
+
+class UserForms(messages.Message):
+    """Return multiple UserForms"""
+    items = messages.MessageField(UserForm, 1, repeated=True)
+
+
+class RecordForm(messages.Message):
+    """RecordForm for outbound Record information"""
+    items = messages.StringField(1, repeated=True)

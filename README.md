@@ -4,7 +4,6 @@
 scissors decapitates lizard, lizard eats paper, paper disproves Spock, Spock vaporizes rock, and as it always has,
 rock crushes scissors."      - Sheldon Cooper
 
-#Full Stack Nanodegree Project 4 Refresh
 
 ## Set-Up Instructions:
 1.  Update the value of application in app.yaml to the app ID you have registered

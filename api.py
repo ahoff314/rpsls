@@ -6,6 +6,7 @@ primarily with communication to/from the API's users."""
 
 
 import logging
+import random
 import endpoints
 from protorpc import remote, messages
 from google.appengine.api import memcache
@@ -13,7 +14,7 @@ from google.appengine.api import taskqueue
 
 from models import User, Game, Score
 from models import StringMessage, NewGameForm, GameForm, MakeMoveForm,\
-    ScoreForms
+    ScoreForm, ScoreForms, GameForms, UserForm, UserForms, RecordForm
 from utils import get_by_urlsafe
 
 NEW_GAME_REQUEST = endpoints.ResourceContainer(NewGameForm)
@@ -27,7 +28,7 @@ USER_REQUEST = endpoints.ResourceContainer(user_name=messages.StringField(1),
 
 MEMCACHE_MOVES_REMAINING = 'MOVES_REMAINING'
 
-# TODO: API endpoints config for RPSLS - create_user, get_game, etc etc
+
 @endpoints.api(name='rpsls', version='v1')
 class RpslsApi(remote.Service):
     """ Rock Paper Scissors Lizard Spock | ahoff314 """
@@ -43,7 +44,7 @@ class RpslsApi(remote.Service):
                     'A user with that name already exists!!!')
         user = User(name=request.user_name, email=request.email)
         user.put()
-        return StringMessage(message='User {} created!'.format(
+        return StringMessage(message='User {} created!!!'.format(
                 request.user_name))
 
     @endpoints.method(request_message=NEW_GAME_REQUEST,
@@ -58,17 +59,13 @@ class RpslsApi(remote.Service):
             raise endpoints.NotFoundException(
                     'A user with that name does not exist!')
         try:
-            game = Game.new_game(user.key, request.min,
-                                 request.max, request.attempts) # needs to be game specific
+            game = Game.new_game(user.key)
         except ValueError:
             raise endpoints.BadRequestException('Maximum must be greater '
                                                 'than minimum!')
 
-        # Use a task queue to update the average attempts remaining.
-        # This operation is not needed to complete the creation of a new game
-        # so it is performed out of sequence.
         taskqueue.add(url='/tasks/cache_average_attempts')
-        return game.to_form('Good luck!')
+        return game.to_form('Rock! Paper! Scissors! Lizard! Spock!')
 
     @endpoints.method(request_message=GET_GAME_REQUEST,
                       response_message=GameForm,
@@ -79,11 +76,12 @@ class RpslsApi(remote.Service):
         """Return the current game state"""
         game = get_by_urlsafe(request.urlsafe_game_key, Game)
         if game:
-            return game.to_form('Show me your moves')
+            return game.to_form('Make your selection please.')
         else:
             raise endpoints.NotFoundException('Game not found!')
 
-    # TODO: Game logic (minimal)
+
+    # TODO: Meat and potatoes of game in make move endpoint
     @endpoints.method(request_message=MAKE_MOVE_REQUEST,
                       response_message=GameForm,
                       path='game/{urlsafe_game_key}',
@@ -93,7 +91,7 @@ class RpslsApi(remote.Service):
         """Makes a move. Returns a game state with message"""
         game = get_by_urlsafe(request.urlsafe_game_key, Game)
         if game.game_over:
-            return game.to_form('Game already over')
+            return game.to_form('Game already over.')
 
         game.attempts_remaining -= 1
         if request.guess == game.target:
@@ -125,7 +123,7 @@ class RpslsApi(remote.Service):
                       path='scores/user/{user_name}',
                       name='get_user_scores',
                       http_method='GET')
-    def get_user_scores(self, request):
+    def get_user_scores(self, request): #TODO: get user scores
         """Returns all of an individual user's scores"""
         user = User.query(User.name == request.user_name).get()
         if not user:
@@ -157,5 +155,5 @@ class RpslsApi(remote.Service):
             memcache.set(MEMCACHE_MOVES_REMAINING,
                          'The average moves remaining is {:.2f}'.format(average))
 
-
+    #TODO: Cancel game, get percentages, user rankings, records
 api = endpoints.api_server([RpslsApi])
