@@ -93,22 +93,17 @@ class RpslsApi(remote.Service):
         if game.game_over:
             return game.to_form('Game already over.')
 
-        game.attempts_remaining -= 1
-        if request.guess == game.target:
-            game.end_game(True)
-            return game.to_form('You win!')
+        selections = ['rock', 'paper', 'scissors', 'lizard', 'spock']
+        if request.selection.lower() not in selections:
+            raise endpoints.BadRequestException('Please choose rock, paper, scissors, lizard, or spock!')
 
-        if request.guess < game.target:
-            msg = 'Too low!'
-        else:
-            msg = 'Too high!'
+        user_selection = request.selection.lower()
+        computer_selection = random.choice(selections)
+        msg = 'User plays ' + user_selection + '. Computer plays ' + computer_selection
 
-        if game.attempts_remaining < 1:
-            game.end_game(False)
-            return game.to_form(msg + ' Game over!')
-        else:
-            game.put()
-            return game.to_form(msg)
+        if user_selection == computer_selection:
+            result = 'tie'
+        elif
 
     @endpoints.method(response_message=ScoreForms,
                       path='scores',
