@@ -3,7 +3,6 @@ entities used by the Game. Because these classes are also regular Python
 classes they can include methods (such as 'to_form' and 'new_game')."""
 
 import random
-from datetime import date
 from protorpc import messages
 from google.appengine.ext import ndb
 
@@ -47,7 +46,7 @@ class User(ndb.Model):
 
 class Game(ndb.Model):
     """Game object"""
-    attempts_remaining = ndb.IntegerProperty(required=True, default=5)
+    game_over = ndb.BooleanProperty(required=True, default=False)
     user = ndb.KeyProperty(required=True, kind='User')
     record = ndb.StringProperty(repeated=True)
 
@@ -68,25 +67,31 @@ class Game(ndb.Model):
         return form
 
     # TODO: Implement proper scoring
-    def end_game(self, won=False):
+    def end_game(self, game='', message='',
+                 user_selection='', computer_selection='', won=False):
         """Ends the game - if won is True, the player won. - if won is False,
         the player lost."""
-        self.game_over = True
-        self.put()
-        # Add the game to the score 'board'
-        score = Score(user=self.user, date=date.today(), won=won,
-                      guesses=self.attempts_allowed - self.attempts_remaining)
+        if user_selection != computer_selection:
+            self.game_over = True
+            self.put()
+            if won:
+                self.user.get().win()
+            else:
+                self.user.get().loss()
+
+        # Add game to leaderboard
+        score = Score(user=self.user, game=game, message=message, won=won,
+                      user_selection=user_selection, computer_selection=computer_selection)
         score.put()
 
 
 class Score(ndb.Model):
     """Score object"""
     user = ndb.KeyProperty(required=True, kind='User')
-    game = ndb.StringProperty(required=true)
-    message = ndb.StringProperty(required=true)
-    user_selection = ndb.StringProperty(required=true)
-    computer_selection = ndb.StringProperty(required=true)
-    date = ndb.DateProperty(required=True)
+    game = ndb.StringProperty(required=True)
+    message = ndb.StringProperty(required=True)
+    user_selection = ndb.StringProperty(required=True)
+    computer_selection = ndb.StringProperty(required=True)
     won = ndb.BooleanProperty(required=True)
 
     # TODO: Update score form based on end game scoring
@@ -123,10 +128,9 @@ class GameForms(messages.Message):
 class ScoreForm(messages.Message):
     """ScoreForm for outbound Score information"""
     user_name = messages.StringField(1, required=True)
-    date = messages.StringField(2, required=True)
-    won = messages.BooleanField(3, required=True)
-    user_selection = messages.StringField(4, required=True)
-    computer_selection = messages.StringField(5, required=True)
+    won = messages.BooleanField(2, required=True)
+    user_selection = messages.StringField(3, required=True)
+    computer_selection = messages.StringField(4, required=True)
 
 
 class ScoreForms(messages.Message):

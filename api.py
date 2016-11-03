@@ -58,13 +58,9 @@ class RpslsApi(remote.Service):
         if not user:
             raise endpoints.NotFoundException(
                     'A user with that name does not exist!')
-        try:
-            game = Game.new_game(user.key)
-        except ValueError:
-            raise endpoints.BadRequestException('Maximum must be greater '
-                                                'than minimum!')
 
-        taskqueue.add(url='/tasks/cache_average_attempts')
+        game = Game.new_game(user.key)
+
         return game.to_form('Rock! Paper! Scissors! Lizard! Spock!')
 
     @endpoints.method(request_message=GET_GAME_REQUEST,
@@ -88,7 +84,7 @@ class RpslsApi(remote.Service):
                       name='make_move',
                       http_method='PUT')
     def make_move(self, request):
-        """Makes a move. Returns a game state with message"""
+        """Makes a move. Returns a game state with message FAM"""
         game = get_by_urlsafe(request.urlsafe_game_key, Game)
         if game.game_over:
             return game.to_form('Game already over.')
@@ -99,11 +95,63 @@ class RpslsApi(remote.Service):
 
         user_selection = request.selection.lower()
         computer_selection = random.choice(selections)
-        msg = 'User plays ' + user_selection + '. Computer plays ' + computer_selection
+        msg = 'User plays ' + user_selection + '. Computer plays ' + computer_selection + '. '
 
+        #
         if user_selection == computer_selection:
             result = 'tie'
-        elif
+        elif user_selection == 'rock':
+            if computer_selection == 'scissors' or 'lizard':
+                result = 'user'
+            else:
+                result = 'computer'
+        elif user_selection == 'paper':
+            if computer_selection == 'rock' or 'spock':
+                result = 'user'
+            else:
+                result = 'computer'
+        elif user_selection == 'scissors':
+            if computer_selection == 'paper' or 'lizard':
+                result = 'user'
+            else:
+                result = 'computer'
+        elif user_selection == 'lizard':
+            if computer_selection == 'spock' or 'paper':
+                result = 'user'
+            else:
+                result = 'computer'
+        elif user_selection == 'spock':
+            if computer_selection == 'rock' or 'scissors':
+                result = 'user'
+            else:
+                result = 'computer'
+
+        if result == 'user':
+            message = msg + 'You win!'
+            game.record.append(message)
+            game.put()
+            game.end_game(game=request.urlsafe_game_key, message=message,
+                          user_selection=user_selection, computer_selection=computer_selection,
+                          won=True)
+            return game.to_form(message)
+        elif result == 'computer':
+            message = msg + 'You lose!'
+            game.record.append(message)
+            game.put()
+            game.end_game(game=request.urlsafe_game_key, message=message,
+                          user_selection=user_selection, computer_selection=computer_selection,
+                          won=False)
+            return game.to_form(message)
+        elif result == 'tie':
+            message = msg + 'Tie! Play RPSLS again.'
+            game.record.append(message)
+            game.put()
+            game.end_game(game=request.urlsafe_game_key, message=message,
+                          user_selection=user_selection, computer_selection=computer_selection,
+                          won=False)
+            return game.to_form(message)
+
+
 
     @endpoints.method(response_message=ScoreForms,
                       path='scores',
@@ -147,8 +195,7 @@ class RpslsApi(remote.Service):
             total_attempts_remaining = sum([game.attempts_remaining
                                         for game in games])
             average = float(total_attempts_remaining)/count
-            memcache.set(MEMCACHE_MOVES_REMAINING,
-                         'The average moves remaining is {:.2f}'.format(average))
+
 
     #TODO: Cancel game, get percentages, user rankings, records
 api = endpoints.api_server([RpslsApi])
