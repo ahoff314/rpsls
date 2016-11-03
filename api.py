@@ -101,27 +101,27 @@ class RpslsApi(remote.Service):
         if user_selection == computer_selection:
             result = 'tie'
         elif user_selection == 'rock':
-            if computer_selection == 'scissors' or 'lizard':
+            if (computer_selection == 'scissors') or (computer_selection == 'lizard'):
                 result = 'user'
             else:
                 result = 'computer'
         elif user_selection == 'paper':
-            if computer_selection == 'rock' or 'spock':
+            if (computer_selection == 'rock') or (computer_selection == 'spock'):
                 result = 'user'
             else:
                 result = 'computer'
         elif user_selection == 'scissors':
-            if computer_selection == 'paper' or 'lizard':
+            if (computer_selection == 'paper') or (computer_selection == 'lizard'):
                 result = 'user'
             else:
                 result = 'computer'
         elif user_selection == 'lizard':
-            if computer_selection == 'spock' or 'paper':
+            if (computer_selection == 'spock') or (computer_selection == 'paper'):
                 result = 'user'
             else:
                 result = 'computer'
         elif user_selection == 'spock':
-            if computer_selection == 'rock' or 'scissors':
+            if (computer_selection == 'rock') or (computer_selection == 'scissors'):
                 result = 'user'
             else:
                 result = 'computer'
@@ -174,28 +174,6 @@ class RpslsApi(remote.Service):
                     'A user with that name does not exist!')
         scores = Score.query(Score.user == user.key)
         return ScoreForms(items=[score.to_form() for score in scores])
-
-    @endpoints.method(response_message=StringMessage,
-                      path='games/average_attempts',
-                      name='get_average_attempts_remaining',
-                      http_method='GET')
-    def get_average_attempts(self, request):
-        """Get the cached average moves remaining"""
-        return StringMessage(message=memcache.get(MEMCACHE_MOVES_REMAINING) or '')
-
-
-    # TODO: Optimize cache_avg attempt with average moves remaining in main.py
-    @staticmethod
-    def _cache_average_attempts():
-        """Populates memcache with the average moves remaining of Games"""
-        games = Game.query(Game.game_over == False).fetch()
-        games = Game.query(Game.game_over == False).fetch()
-        if games:
-            count = len(games)
-            total_attempts_remaining = sum([game.attempts_remaining
-                                        for game in games])
-            average = float(total_attempts_remaining)/count
-
 
     #TODO: Cancel game, get percentages, user rankings, records
 api = endpoints.api_server([RpslsApi])
