@@ -16,13 +16,8 @@ rock crushes scissors."      - Sheldon Cooper
  
  
 ##Game Description:
-Guess a number is a simple guessing game. Each game begins with a random 'target'
-number between the minimum and maximum values provided, and a maximum number of
-'attempts'. 'Guesses' are sent to the `make_move` endpoint which will reply
-with either: 'too low', 'too high', 'you win', or 'game over' (if the maximum
-number of attempts is reached).
-Many different Guess a Number games can be played by many different Users at any
-given time. Each game can be retrieved or played by using the path parameter
+Rock Paper Scissors Lizard Spock is a fun variant of the classic game we all know and love.
+Each game can be retrieved or played by using the path parameter
 `urlsafe_game_key`.
 
 ##Files Included:
@@ -81,14 +76,7 @@ given time. Each game can be retrieved or played by using the path parameter
     - Returns: ScoreForms. 
     - Description: Returns all Scores recorded by the provided player (unordered).
     Will raise a NotFoundException if the User does not exist.
-    
- - **get_active_game_count**
-    - Path: 'games/active'
-    - Method: GET
-    - Parameters: None
-    - Returns: StringMessage
-    - Description: Gets the average number of attempts remaining for all games
-    from a previously cached memcache key.
+
 
 ##Models Included:
  - **User**
