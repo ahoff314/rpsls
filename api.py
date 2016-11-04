@@ -61,21 +61,6 @@ class RpslsApi(remote.Service):
 
         return game.to_form('Rock! Paper! Scissors! Lizard! Spock!')
 
-    @endpoints.method(request_message=GET_GAME_REQUEST,
-                      response_message=GameForm,
-                      path='game/{urlsafe_game_key}',
-                      name='get_game',
-                      http_method='GET')
-    def get_game(self, request):
-        """Return the current game state"""
-        game = get_by_urlsafe(request.urlsafe_game_key, Game)
-        if game:
-            return game.to_form('Make your selection please.')
-        else:
-            raise endpoints.NotFoundException('Game not found!')
-
-
-    # TODO: Meat and potatoes of game in make move endpoint
     @endpoints.method(request_message=MAKE_MOVE_REQUEST,
                       response_message=GameForm,
                       path='game/{urlsafe_game_key}',
@@ -149,29 +134,48 @@ class RpslsApi(remote.Service):
                           won=False)
             return game.to_form(message)
 
-
-
-    @endpoints.method(response_message=ScoreForms,
-                      path='scores',
-                      name='get_scores',
-                      http_method='GET')
-    def get_scores(self, request):
-        """Return Leaderboard"""
-        return ScoreForms(items=[score.to_form() for score in Score.query()])
-
     @endpoints.method(request_message=USER_REQUEST,
-                      response_message=ScoreForms,
-                      path='scores/user/{user_name}',
-                      name='get_user_scores',
+                      response_message=GameForms,
+                      path='games/user/{user_name}',
+                      name='get_user_games',
                       http_method='GET')
-    def get_user_scores(self, request): #TODO: get user scores
-        """Returns all of an individual user's scores"""
+    def get_user_games(self, request):
+        """Get an individual user's active games"""
         user = User.query(User.name == request.user_name).get()
         if not user:
             raise endpoints.NotFoundException(
-                    'A user with that name does not exist!')
-        scores = Score.query(Score.user == user.key)
-        return ScoreForms(items=[score.to_form() for score in scores])
+                'A User with that name does not exist!')
+        games = Game.query(Game.user == user.key)
+        games = games.filter(Game.game_over == False)
+        if games.count() > 0:
+            return GameForms(items=[game.to_form("{}'s unfinished games.".format(
+                request.user_name)) for game in games])
+        else:
+            raise endpoints.NotFoundException('This user has no active games!')
 
-    #TODO: Cancel game, get percentages, user rankings, records
+    @endpoints.method(request_message=GET_GAME_REQUEST,
+                      response_message=StringMessage,
+                      path='game/{urlsafe_game_key}/cancel_game',
+                      name='cancel_game',
+                      http_method='DELETE')
+    def cancel_game(self, request):
+        """Cancel an active game"""
+        game = get_by_urlsafe(request.urlsafe_game_key, Game)
+        if game and not game.game_over:
+            game.end_game(won=False)
+            game.key.delete()
+            return StringMessage(
+                message='Game {} has been cancelled.'.format(
+                    request.urlsafe_game_key))
+        elif game and game.game_over:
+            return StringMessage(
+                message='Game {} is already over.'.format(
+                    request.urlsafe_game_key))
+        else:
+            raise endpoints.NotFoundException('Game does not exist.')
+
+
+# TODO: Cancel game, get percentages, user rankings, records
+
+
 api = endpoints.api_server([RpslsApi])

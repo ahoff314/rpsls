@@ -66,7 +66,6 @@ class Game(ndb.Model):
         form.message = message
         return form
 
-    # TODO: Implement proper scoring
     def end_game(self, game='', message='',
                  user_selection='', computer_selection='', won=False):
         """Ends the game - if won is True, the player won. - if won is False,
@@ -114,7 +113,6 @@ class NewGameForm(messages.Message):
     max = messages.IntegerField(3, default=10)
     attempts = messages.IntegerField(4, default=5)
 
-# TODO: Update make a move form to work with game scoring
 class MakeMoveForm(messages.Message):
     """Used to make a move in an existing game"""
     selection = messages.StringField(1, required=True)
