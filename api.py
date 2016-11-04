@@ -14,7 +14,7 @@ from google.appengine.api import taskqueue
 
 from models import User, Game, Score
 from models import StringMessage, NewGameForm, GameForm, MakeMoveForm,\
-    ScoreForm, ScoreForms, GameForms, UserForm, UserForms, RecordForm
+    ScoreForm, ScoreForms, GameForms, UserForm, UserForms, HistoryForm
 from utils import get_by_urlsafe
 
 NEW_GAME_REQUEST = endpoints.ResourceContainer(NewGameForm)
@@ -174,8 +174,30 @@ class RpslsApi(remote.Service):
         else:
             raise endpoints.NotFoundException('Game does not exist.')
 
+    @endpoints.method(request_message=GET_GAME_REQUEST,
+                      response_message=HistoryForm,
+                      path='game/{urlsafe_game_key}/record',
+                      name='get_game_history',
+                      http_method='GET')
+    def get_game_history(self, request):
+        """User's game history"""
+        game = get_by_urlsafe(request.urlsafe_game_key, Game)
+        if game:
+            return HistoryForm(items=game.record)
+        else:
+            raise endpoints.NotFoundException('That game does not exist')
 
-# TODO: Cancel game, get percentages, user rankings, records
-
+    @endpoints.method(request_message=GET_GAME_REQUEST,
+                      response_message=GameForm,
+                      path='game/{urlsafe_game_key}',
+                      name='get_game',
+                      http_method='GET')
+    def get_game(self, request):
+        """Return the current game state."""
+        game = get_by_urlsafe(request.urlsafe_game_key, Game)
+        if game:
+            return game.to_form('Make a  move')
+        else:
+            raise endpoints.NotFoundException('Game not found!')
 
 api = endpoints.api_server([RpslsApi])
