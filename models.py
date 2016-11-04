@@ -70,7 +70,7 @@ class Game(ndb.Model):
                  user_selection='', computer_selection='', won=False):
         """Ends the game - if won is True, the player won. - if won is False,
         the player lost."""
-        if user_selection != computer_selection:
+        if user_selection:
             self.game_over = True
             self.put()
             if won:
