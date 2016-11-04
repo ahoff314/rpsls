@@ -140,7 +140,7 @@ class RpslsApi(remote.Service):
                       name='get_user_games',
                       http_method='GET')
     def get_user_games(self, request):
-        """Get an individual user's active games"""
+        """Get an individual user's active / unfinished games"""
         user = User.query(User.name == request.user_name).get()
         if not user:
             raise endpoints.NotFoundException(
@@ -199,5 +199,7 @@ class RpslsApi(remote.Service):
             return game.to_form('See the game_over status below')
         else:
             raise endpoints.NotFoundException('Game not found!')
+
+    # TODO: Get high scores(leaderboard based on all time wins) and get user rankings (win /loss ratio)
 
 api = endpoints.api_server([RpslsApi])
