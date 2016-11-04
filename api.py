@@ -180,7 +180,7 @@ class RpslsApi(remote.Service):
                       name='get_game_history',
                       http_method='GET')
     def get_game_history(self, request):
-        """User's game history"""
+        """User's specific game history with selection recap"""
         game = get_by_urlsafe(request.urlsafe_game_key, Game)
         if game:
             return HistoryForm(items=game.record)
@@ -193,10 +193,10 @@ class RpslsApi(remote.Service):
                       name='get_game',
                       http_method='GET')
     def get_game(self, request):
-        """Return the current game state."""
+        """Return the current game state"""
         game = get_by_urlsafe(request.urlsafe_game_key, Game)
         if game:
-            return game.to_form('Make a  move')
+            return game.to_form('See the game_over status below')
         else:
             raise endpoints.NotFoundException('Game not found!')
 
