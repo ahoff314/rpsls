@@ -26,6 +26,9 @@ MAKE_MOVE_REQUEST = endpoints.ResourceContainer(
 USER_REQUEST = endpoints.ResourceContainer(user_name=messages.StringField(1),
                                            email=messages.StringField(2))
 
+HIGH_SCORES_REQUEST = endpoints.ResourceContainer(
+                          number_of_results=messages.IntegerField(1),)
+
 
 @endpoints.api(name='rpsls', version='v1')
 class RpslsApi(remote.Service):
@@ -201,5 +204,17 @@ class RpslsApi(remote.Service):
             raise endpoints.NotFoundException('Game not found!')
 
     # TODO: Get high scores(leaderboard based on all time wins) and get user rankings (win /loss ratio)
+
+    @endpoints.method(request_message=HIGH_SCORES_REQUEST,
+                      response_message=UserForms,
+                      path='scores/high_scores',
+                      name='get_high_scores',
+                      http_method='GET')
+    def get_high_scores(self, request):
+        """High scores in descending order based on all time wins"""
+        users = User.query().fetch(limit=request.number_of_results)
+        users = sorted(users, key=lambda x: x.wins, reverse=True)
+        return UserForms(items=[user.to_form() for user in users])
+
 
 api = endpoints.api_server([RpslsApi])
