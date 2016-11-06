@@ -80,7 +80,7 @@ class RpslsApi(remote.Service):
         computer_selection = random.choice(selections)
         msg = 'User plays ' + user_selection + '. Computer plays ' + computer_selection + '. '
 
-        #
+
         if user_selection == computer_selection:
             result = 'tie'
         elif user_selection == 'rock':
