@@ -203,8 +203,6 @@ class RpslsApi(remote.Service):
         else:
             raise endpoints.NotFoundException('Game not found!')
 
-    # TODO: Get high scores(leaderboard based on all time wins) and get user rankings (win /loss ratio)
-
     @endpoints.method(request_message=HIGH_SCORES_REQUEST,
                       response_message=UserForms,
                       path='scores/high_scores',
@@ -216,5 +214,14 @@ class RpslsApi(remote.Service):
         users = sorted(users, key=lambda x: x.wins, reverse=True)
         return UserForms(items=[user.to_form() for user in users])
 
+    @endpoints.method(response_message=UserForms,
+                      path='user/ranking',
+                      name='get_user_rankings',
+                      http_method='GET')
+    def get_user_rankings(self, request):
+        """User rankings by win percentage"""
+        users = User.query(User.total_games > 0).fetch()
+        users = sorted(users, key=lambda x: x.percentage, reverse=True)
+        return UserForms(items=[user.to_form() for user in users])
 
 api = endpoints.api_server([RpslsApi])
