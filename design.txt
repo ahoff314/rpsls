@@ -1,0 +1,15 @@
+## Design Reflections
+
+- Most of my game properties of the data models were similar to the Guess a Number example. However, I did have to add
+a few things to enable my Rock Paper Scissors Lizard Spock game to work. First, I added a percentage property so I could
+track each user's win loss ratio. Accordingly, I also added win and loss properties in order to continuously tally the
+total wins and total games played. Since many of my endpoints used the UserForm, I removed much. of the scoreForm
+functionality from the example.
+
+- Initially, I struggled with implementing some of the score functionality as used in the example. My game, Rock Paper
+Scissors Lizard Spock, is fundamentally different from the guess a number so I chose to use the UserForms for both high
+scores and rankings by percentage. This made more sense, given the design of my application, because each game is only
+played once and each action can be attributed to a user. Lastly, my game logic was extremely involved given the extra
+complexity beyond the traditional rock paper scissors game. It helped me to physically write down and chart a table of
+each possible selection, what the selections beats, and what it is beat by. This helped me to more easily and
+efficiently create the game logic in my api.py file when I was ready.
