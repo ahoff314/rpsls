@@ -4,12 +4,11 @@ This can also contain game logic. For more complex games it would be wise to
 move game logic to another file. Ideally the API will be simple, concerned
 primarily with communication to/from the API's users."""
 
-
 import random
 import endpoints
 from protorpc import remote, messages
 
-from models import User, Game, Score
+from models import User, Game
 from models import StringMessage, NewGameForm, GameForm, MakeMoveForm,\
     GameForms, UserForms, HistoryForm
 from utils import get_by_urlsafe
@@ -70,9 +69,10 @@ class RpslsApi(remote.Service):
         """Makes a move. Returns a game state with message"""
         game = get_by_urlsafe(request.urlsafe_game_key, Game)
         if game.game_over:
-            return game.to_form('Game already over.')
+            return game.to_form('Game is already over.')
 
         selections = ['rock', 'paper', 'scissors', 'lizard', 'spock']
+
         if request.selection.lower() not in selections:
             raise endpoints.BadRequestException('Please choose rock, paper, scissors, lizard, or spock!')
 

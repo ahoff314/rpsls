@@ -6,7 +6,7 @@ import random
 from protorpc import messages
 from google.appengine.ext import ndb
 
-# User class, this will not change
+
 class User(ndb.Model):
     """User profile"""
     name = ndb.StringProperty(required=True)
@@ -18,7 +18,7 @@ class User(ndb.Model):
     def percentage(self):
         """ Win percentage"""
         if self.total_games > 0:
-            return float(self.wins)/float(self.total_games)
+            return float(self.wins/self.total_games)
         else:
             return 0
 
@@ -33,13 +33,13 @@ class User(ndb.Model):
         return form
 
     def win(self):
-        """Adds win to User"""
+        """Adds a win to the user"""
         self.wins += 1
         self.total_games += 1
         self.put()
 
     def loss(self):
-        """Adds loss to User"""
+        """Adds a loss to the user"""
         self.total_games += 1
         self.put()
 
@@ -120,6 +120,7 @@ class NewGameForm(messages.Message):
     min = messages.IntegerField(2, default=1)
     max = messages.IntegerField(3, default=10)
     attempts = messages.IntegerField(4, default=5)
+
 
 class MakeMoveForm(messages.Message):
     """Used to make a move in an existing game"""
