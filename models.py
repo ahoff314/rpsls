@@ -18,7 +18,7 @@ class User(ndb.Model):
     def percentage(self):
         """ Win percentage"""
         if self.total_games > 0:
-            return float(self.wins/self.total_games)
+            return float(self.wins)/float(self.total_games)
         else:
             return 0
 
