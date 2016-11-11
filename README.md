@@ -116,7 +116,7 @@ Each game can be retrieved or played by using the path parameter
     - Records completed games. Associated with Users model via KeyProperty.
     
 ##Forms Included:
- - ** UserForm
+ - **UserForm**
     - Representation of a User's state
  - **GameForm**
     - Representation of a Game's state (urlsafe_key, attempts_remaining,
