@@ -5,46 +5,45 @@ scissors decapitates lizard, lizard eats paper, paper disproves Spock, Spock vap
 rock crushes scissors."      - Sheldon Cooper
 
 
- ## Set-Up Instructions:
- 1.  Update the value of application in app.yaml to the app ID you have registered
+## Set-Up Instructions:
+1.  Update the value of application in app.yaml to the app ID you have registered
  in the App Engine admin console and would like to use to host your instance of this sample.
- 2.  Run the app with the devserver using dev_appserver.py DIR, and ensure it's
+2.  Run the app with the devserver using dev_appserver.py DIR, and ensure it's
  running by visiting the API Explorer - by default localhost:8080/_ah/api/explorer.
- 3.  (Optional) Generate your client library(ies) with the endpoints tool.
+3.  (Optional) Generate your client library(ies) with the endpoints tool.
  Deploy your application.
 
- ## How To Play
+## How To Play
 
- Rock Paper Scissors Lizard Spock is very similar to the classic game of rock paper scissors. Select either Rock, Paper,
- Scissors, Lizard, or Spock. The computer you are playing against will randomly choose one of these selections.
+Rock Paper Scissors Lizard Spock is very similar to the classic game of rock paper scissors. Select either Rock, Paper,
+Scissors, Lizard, or Spock. The computer you are playing against will randomly choose one of these selections.
 
- Scissors cuts paper
- paper covers rock,
- rock crushes lizard,
- lizard poisons Spock,
- Spock smashes scissors,
- scissors decapitates lizard,
- lizard eats paper,
- paper disproves Spock,
- Spock vaporizes rock,
- and as it always has,
- rock crushes scissors.
+Scissors cuts paper
+paper covers rock,
+rock crushes lizard,
+lizard poisons Spock,
+Spock smashes scissors,
+scissors decapitates lizard,
+lizard eats paper,
+paper disproves Spock,
+Spock vaporizes rock,
+and as it always has,
+rock crushes scissors.
 
- You can win, lose, or tie. Each result contributes to your overall record and high score.
+You can win, lose, or tie. Each result contributes to your overall record and high score.
 
- Simple right? After creating a user and a new game, play a few games using the make_move endpoint and you'll get the
- hang of it! Further instructions to test the endpoints and play a RPSLS game are below.
+Simple right? After creating a user and a new game, play a few games using the make_move endpoint and you'll get the
+hang of it! Further instructions to test the endpoints and play a RPSLS game are below.
 
- ## Testing
+## Testing
 
- 1. Create a new user using the create_user endpoint
- 2. Create a new game using the new_game endpoint. Make sure to save the urlsafe_key for later use
- 3. Play RPSLS by using the make_move endpoint. Enter an applicable selection to play against the computer
- 4. Select the get_high_scores (all time wins) or get_user_rankings (win / loss ratio) to see user scores and results
- 5. Test a specific game history using get_game_history and the urlsafe_key parameter
- 6. The urlsafe_key can also be used to cancel a game or return the current game state
+1. Create a new user using the create_user endpoint
+2. Create a new game using the new_game endpoint. Make sure to save the urlsafe_key for later use
+3. Play RPSLS by using the make_move endpoint. Enter an applicable selection to play against the computer
+4. Select the get_high_scores (all time wins) or get_user_rankings (win / loss ratio) to see user scores and results
+5. Test a specific game history using get_game_history and the urlsafe_key parameter
+6. The urlsafe_key can also be used to cancel a game or return the current game state
 
- 
  
 ##Game Description:
 Rock Paper Scissors Lizard Spock is a fun variant of the classic game we all know and love.
