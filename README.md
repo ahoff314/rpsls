@@ -5,12 +5,12 @@ scissors decapitates lizard, lizard eats paper, paper disproves Spock, Spock vap
 rock crushes scissors."      - Sheldon Cooper
 
 
-## Set-Up Instructions:
-1.  Update the value of application in app.yaml to the app ID you have registered
+ ## Set-Up Instructions:
+ 1.  Update the value of application in app.yaml to the app ID you have registered
  in the App Engine admin console and would like to use to host your instance of this sample.
-2.  Run the app with the devserver using dev_appserver.py DIR, and ensure it's
+ 2.  Run the app with the devserver using dev_appserver.py DIR, and ensure it's
  running by visiting the API Explorer - by default localhost:8080/_ah/api/explorer.
-3.  (Optional) Generate your client library(ies) with the endpoints tool.
+ 3.  (Optional) Generate your client library(ies) with the endpoints tool.
  Deploy your application.
 
  ## How To Play
