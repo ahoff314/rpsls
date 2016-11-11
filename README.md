@@ -89,7 +89,7 @@ Each game can be retrieved or played by using the path parameter
     - Returns: UserForms
     - Description: High scores in descending order based on all time wins.
 
- - **get_user_rankings*
+ - **get_user_rankings**
     - Path: 'scores/user/{user_name}'
     - Method: GET
     - Parameters: user_name
