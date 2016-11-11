@@ -18,8 +18,7 @@ class SendReminderEmail(webapp2.RequestHandler):
         app_id = app_identity.get_application_id()
         users = User.query(User.email != None)
         for user in users:
-            games = Game.query(Game.user == user.key)
-            games = games.filter(Game.game_over == False)
+            games = Game.query(Game.user == user.key, Game.game_over == False).fetch()
             if games:
                 subject = 'FINISH YOUR RPSLS GAME!'
                 body = 'Hello {}, finish your existing RPSLS game. Have a wonderful day! :)'.format(user.name)
