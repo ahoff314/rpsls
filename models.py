@@ -95,8 +95,12 @@ class Score(ndb.Model):
 
     # TODO: Update score form based on end game scoring
     def to_form(self):
-        return ScoreForm(user_name=self.user.get().name, won=self.won,
-                         date=str(self.date), guesses=self.guesses)
+        return ScoreForm(user_name=self.user.get().name,
+                         game=self.game,
+                         user_selection=self.user_selection,
+                         computer_selection=self.computer_selection,
+                         won=self.won,
+                         message=self.message,)
 
 
 class HistoryForm(messages.Message):
