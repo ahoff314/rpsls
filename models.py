@@ -93,7 +93,6 @@ class Score(ndb.Model):
     computer_selection = ndb.StringProperty(required=True)
     won = ndb.BooleanProperty(required=True)
 
-    # TODO: Update score form based on end game scoring
     def to_form(self):
         return ScoreForm(user_name=self.user.get().name,
                          game=self.game,

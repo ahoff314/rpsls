@@ -5,16 +5,13 @@ move game logic to another file. Ideally the API will be simple, concerned
 primarily with communication to/from the API's users."""
 
 
-import logging
 import random
 import endpoints
 from protorpc import remote, messages
-from google.appengine.api import memcache
-from google.appengine.api import taskqueue
 
 from models import User, Game, Score
 from models import StringMessage, NewGameForm, GameForm, MakeMoveForm,\
-    ScoreForm, ScoreForms, GameForms, UserForm, UserForms, HistoryForm
+    GameForms, UserForms, HistoryForm
 from utils import get_by_urlsafe
 
 NEW_GAME_REQUEST = endpoints.ResourceContainer(NewGameForm)
@@ -82,7 +79,6 @@ class RpslsApi(remote.Service):
         user_selection = request.selection.lower()
         computer_selection = random.choice(selections)
         msg = 'User plays ' + user_selection + '. Computer plays ' + computer_selection + '. '
-
 
         if user_selection == computer_selection:
             result = 'tie'
