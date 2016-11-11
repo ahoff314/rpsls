@@ -90,14 +90,6 @@ Each game can be retrieved or played by using the path parameter
     - Description: High scores in descending order based on all time wins.
 
  - **get_user_rankings**
-    - Path: 'scores/user/{user_name}'
-    - Method: GET
-    - Parameters: user_name
-    - Returns: ScoreForms.
-    - Description: Returns all Scores recorded by the provided player (unordered).
-    Will raise a NotFoundException if the User does not exist.
-
- - **get_user_scores**
     - Path: 'users/rankings'
     - Method: GET
     - Parameters: None
