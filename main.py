@@ -8,8 +8,7 @@ import webapp2
 from google.appengine.api import mail, app_identity
 from api import RpslsApi
 
-from models import User
-
+from models import User, Game
 
 
 class SendReminderEmail(webapp2.RequestHandler):
@@ -21,9 +20,9 @@ class SendReminderEmail(webapp2.RequestHandler):
         for user in users:
             games = Game.query(Game.user == user.key)
             games = games.filter(Game.game_over == False)
-            if games.count() > 0:
-                subject = 'This is a reminder!'
-                body = 'Hello {}, finish your existing RPSLS game. Have a wonderful day!'.format(user.name)
+            if games:
+                subject = 'FINISH YOUR RPSLS GAME!'
+                body = 'Hello {}, finish your existing RPSLS game. Have a wonderful day! :)'.format(user.name)
                 # This will send test emails, the arguments to send_mail are:
                 # from, to, subject, body
                 mail.send_mail('noreply@{}.appspotmail.com'.format(app_id),

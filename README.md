@@ -46,36 +46,63 @@ Each game can be retrieved or played by using the path parameter
     existing user - will raise a NotFoundException if not. Min must be less than
     max. Also adds a task to a task queue to update the average moves remaining
     for active games.
-     
+
+ - **make_move**
+    - Path: 'game/{urlsafe_game_key}'
+    - Method: PUT
+    - Parameters: urlsafe_game_key, selection
+    - Returns: GameForm with new game state.
+    - Description: Accepts a selection and play a RPSLS game against the computer
+    
+ - **get_user_games**
+    - Path: 'games/user/{user_name}'
+    - Method: GET
+    - Parameters: user
+    - Returns: GameForms
+    - Description: Returns all of a user's active games.
+    
+ - **cancel_game**
+    - Path: 'game/{urlsafe_game_key}/cancel_game'
+    - Method: DELETE
+    - Parameters: urlsafe_game_key
+    - Returns: StringMessage
+    - Description: Cancel existing game.
+
+ - **get_game_history**
+    - Path: 'game/{urlsafe_game_key}/record'
+    - Method: GET
+    - Parameters: urlsafe_game_key
+    - Returns: HistoryForm
+    - Description: User's specific game history with selection recap.
+
  - **get_game**
     - Path: 'game/{urlsafe_game_key}'
     - Method: GET
     - Parameters: urlsafe_game_key
-    - Returns: GameForm with current game state.
-    - Description: Returns the current state of a game.
-    
- - **make_move**
-    - Path: 'game/{urlsafe_game_key}'
-    - Method: PUT
-    - Parameters: urlsafe_game_key, guess
-    - Returns: GameForm with new game state.
-    - Description: Accepts a 'guess' and returns the updated state of the game.
-    If this causes a game to end, a corresponding Score entity will be created.
-    
- - **get_scores**
-    - Path: 'scores'
+    - Returns: UserForms
+    - Description: Returns the current game state
+
+  - **get_high_scores**
+    - Path: 'scores/high_scores'
     - Method: GET
     - Parameters: None
-    - Returns: ScoreForms.
-    - Description: Returns all Scores in the database (unordered).
-    
- - **get_user_scores**
+    - Returns: UserForms
+    - Description: High scores in descending order based on all time wins.
+
+  - **get_user_rankings*
     - Path: 'scores/user/{user_name}'
     - Method: GET
     - Parameters: user_name
-    - Returns: ScoreForms. 
+    - Returns: ScoreForms.
     - Description: Returns all Scores recorded by the provided player (unordered).
     Will raise a NotFoundException if the User does not exist.
+
+  - **get_user_scores**
+    - Path: 'users/rankings'
+    - Method: GET
+    - Parameters: None
+    - Returns: UserForms
+    - Description: User rankings by win percentage.
 
 
 ##Models Included:

@@ -78,7 +78,6 @@ class Game(ndb.Model):
             else:
                 self.user.get().loss()
 
-        # Add game to leaderboard
         score = Score(user=self.user, game=game, message=message, won=won,
                       user_selection=user_selection, computer_selection=computer_selection)
         score.put()
